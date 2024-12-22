@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   }
 }

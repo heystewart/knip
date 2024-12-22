@@ -9,6 +9,8 @@ export const isJS = (sourceFile: BoundSourceFile) =>
 
 export const isModule = (sourceFile: BoundSourceFile) => ts.isExternalModule(sourceFile);
 
+export const isJSON = (sourceFile: BoundSourceFile) => sourceFile.scriptKind === ts.ScriptKind.JSON;
+
 export function getImportsFromPragmas(sourceFile: BoundSourceFile) {
   const importNodes: ImportNode[] = [];
 

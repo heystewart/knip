@@ -15,11 +15,13 @@ test('Support compiler functions in config', async () => {
 
   assert(issues.files.has(join(cwd, 'unused.css')));
   assert(issues.files.has(join(cwd, 'unused.md')));
+  assert(issues.files.has(join(cwd, 'package.json')));
+  assert(issues.files.has(join(cwd, 'tsconfig.json')));
 
   assert.deepEqual(counters, {
     ...baseCounters,
-    files: 2,
-    processed: 11,
-    total: 11,
+    files: 4,
+    processed: 14,
+    total: 14,
   });
 });

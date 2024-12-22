@@ -1,11 +1,13 @@
 import type {
   DependencyGraph,
+  Export,
   FileNode,
   IdToFileMap,
   IdToNsToFileMap,
   ImportDetails,
   ImportMap,
 } from '../types/dependency-graph.js';
+import { SymbolType } from '../types/issues.js';
 
 export const getOrCreateFileNode = (graph: DependencyGraph, filePath: string) =>
   graph.get(filePath) ?? createFileNode();
@@ -34,7 +36,7 @@ export const updateImportMap = (file: FileNode, importMap: ImportMap, graph: Dep
   }
 };
 
-const createFileNode = (): FileNode => ({
+export const createFileNode = (): FileNode => ({
   imports: {
     internal: new Map(),
     external: new Set(),
@@ -44,6 +46,19 @@ const createFileNode = (): FileNode => ({
   duplicates: new Set(),
   scripts: new Set(),
   traceRefs: new Set(),
+});
+
+export const createExport = ({ identifier }: { identifier: string }): Export => ({
+  identifier,
+  pos: 0,
+  line: 1,
+  col: 1,
+  type: SymbolType.UNKNOWN,
+  members: [],
+  jsDocTags: new Set(),
+  refs: [0, false],
+  fixes: [],
+  isReExport: false,
 });
 
 export const createImports = (): ImportDetails => ({

@@ -11,8 +11,10 @@ import type { SourceFileManager } from './typescript/SourceFileManager.js';
 import { createHosts } from './typescript/create-hosts.js';
 import { _getImportsAndExports } from './typescript/get-imports-and-exports.js';
 import type { ResolveModuleNames } from './typescript/resolve-module-names.js';
+import { isJSON } from './typescript/visitors/helpers.js';
 import { timerify } from './util/Performance.js';
 import { compact } from './util/array.js';
+import { createExport, createFileNode } from './util/dependency-graph.js';
 import { getPackageNameFromModuleSpecifier, isStartsLikePackageName, sanitizeSpecifier } from './util/modules.js';
 import { dirname, extname, isInNodeModules, join } from './util/path.js';
 import type { ToSourceFilePath } from './util/to-source-path.js';
@@ -243,6 +245,14 @@ export class ProjectPrincipal {
     if (!sourceFile) throw new Error(`Unable to find ${filePath}`);
 
     const skipExports = this.skipExportsAnalysis.has(filePath);
+
+    if (isJSON(sourceFile)) {
+      // Exception to allow .json files to be imported + compiled conditionally
+      const fileNode = createFileNode();
+      if (/^\s*[[{]/.test(sourceFile.text)) return fileNode;
+      fileNode.exports.set('default', createExport({ identifier: 'default' }));
+      return fileNode;
+    }
 
     const resolve = (specifier: string) => this.backend.resolveModuleNames([specifier], sourceFile.fileName)[0];
 
